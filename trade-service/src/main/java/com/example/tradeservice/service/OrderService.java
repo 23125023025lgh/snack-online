@@ -50,4 +50,11 @@ public class OrderService {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("订单不存在"));
     }
+
+    public Order updateOrderStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NoSuchElementException("订单不存在"));
+        order.setStatus(status);
+        return orderRepository.save(order);
+    }
 }

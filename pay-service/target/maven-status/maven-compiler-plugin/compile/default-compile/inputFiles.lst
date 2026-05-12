@@ -1,2 +1,8 @@
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\pay-service\src\main\java\com\example\payservice\controller\PaymentController.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\pay-service\src\main\java\com\example\payservice\feign\TradeFeignClient.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\pay-service\src\main\java\com\example\payservice\service\PaymentService.java
 D:\Vmware_download\practice_class\e-commerce-platform\snack-online\pay-service\src\main\java\com\example\payservice\controller\HelloController.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\pay-service\src\main\java\com\example\payservice\entity\Payment.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\pay-service\src\main\java\com\example\payservice\dto\CreatePaymentRequest.java
 D:\Vmware_download\practice_class\e-commerce-platform\snack-online\pay-service\src\main\java\com\example\payservice\PayServiceApplication.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\pay-service\src\main\java\com\example\payservice\repository\PaymentRepository.java
