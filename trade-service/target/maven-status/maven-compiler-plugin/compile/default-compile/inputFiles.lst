@@ -1,0 +1,9 @@
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\trade-service\src\main\java\com\example\tradeservice\TradeServiceApplication.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\trade-service\src\main\java\com\example\tradeservice\dto\CreateOrderRequest.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\trade-service\src\main\java\com\example\tradeservice\dto\ProductDTO.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\trade-service\src\main\java\com\example\tradeservice\service\OrderService.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\trade-service\src\main\java\com\example\tradeservice\controller\OrderController.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\trade-service\src\main\java\com\example\tradeservice\entity\Order.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\trade-service\src\main\java\com\example\tradeservice\repository\OrderRepository.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\trade-service\src\main\java\com\example\tradeservice\controller\HelloController.java
+D:\Vmware_download\practice_class\e-commerce-platform\snack-online\trade-service\src\main\java\com\example\tradeservice\feign\ProductFeignClient.java

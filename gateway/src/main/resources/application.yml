@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      # discovery:
+      #   locator:
+      #     enabled: true
+      routes:
+        - id: store-service-route
+          uri: lb://store-service
+          predicates:
+            - Path=/api/product/**,/api/shop/**,/api/user/**
+        - id: trade-service-route
+          uri: lb://trade-service
+          predicates:
+            - Path=/api/order/**
+        - id: pay-service-route
+          uri: lb://pay-service
+          predicates:
+            - Path=/api/pay/**

@@ -1,0 +1,28 @@
+gateway-->网关服务
+trade-service-->交易服务
+pay-service-->支付服务
+
+
+
+
+Nacos的作用:
+1.服务发现：谁在哪里？（通讯录）
+2.配置管理：重要的设置是什么？（公告栏）
+
+
+
+执行环境:java 17
+Nacos 服务注册中心的地址:http://localhost:8848/nacos
+
+
+- http://localhost:8080/api/product/hello (通过 gateway 转发到 store-service)
+- http://localhost:8080/api/order/hello (通过 gateway 转发到 trade-service)
+- http://localhost:8080/api/pay/hello (通过 gateway 转发到 pay-service)
+
+JWT 密钥:snack-online-secret-snack-online-secret-snack-online-secret-
+
+
+
+PowerShell 终端的 UTF-8 编码显示问题（仅在powershell进行模拟下单测试）:
+Spring Boot 返回的是 UTF-8 编码的 JSON 数据，但 PowerShell 的 Invoke-WebRequest 
+在某些情况下会错误地解码 UTF-8 字符串，导致中文显示为乱码。代码本身是正确的！
