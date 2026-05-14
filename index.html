@@ -1,0 +1,2069 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>零食很忙</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f0f9f0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      background-color: #fff;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(124, 179, 66, 0.3);
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .content {
+      padding: 20px;
+    }
+    .login-form, .register-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .login-form input, .register-form input {
+      padding: 15px;
+      border: 2px solid #e8f5e9;
+      border-radius: 10px;
+      font-size: 16px;
+      background-color: #fafafa;
+      transition: all 0.3s ease;
+    }
+    .login-form input:focus, .register-form input:focus {
+      outline: none;
+      border-color: #7cb342;
+      background-color: #fff;
+    }
+    .btn {
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(124, 179, 66, 0.4);
+    }
+    .btn-secondary {
+      background-color: #f5f5f5;
+      color: #666;
+    }
+    .btn-secondary:hover {
+      background-color: #eee;
+    }
+    .toggle-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #7cb342;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .toggle-link:hover {
+      text-decoration: underline;
+    }
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    .product-card {
+      background-color: #fff;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: 1px solid #eee;
+    }
+    .product-image {
+      width: 100%;
+      height: 120px;
+      background-color: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+    .product-info {
+      padding: 12px;
+    }
+    .product-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .product-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e53935;
+      margin-bottom: 5px;
+    }
+    .product-stock {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .btn-buy {
+      width: 100%;
+      padding: 10px;
+      background-color: #7cb342;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-buy:hover {
+      background-color: #558b2f;
+    }
+    .btn-buy:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .quantity-btn {
+      width: 36px;
+      height: 36px;
+      border: 2px solid #e8f5e9;
+      border-radius: 8px;
+      background-color: #fafafa;
+      font-size: 18px;
+      color: #7cb342;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .quantity-btn:hover:not(:disabled) {
+      background-color: #7cb342;
+      color: #fff;
+      border-color: #7cb342;
+    }
+    .quantity-btn:disabled {
+      background-color: #f0f0f0;
+      color: #ccc;
+      border-color: #e0e0e0;
+      cursor: not-allowed;
+    }
+    .quantity-input {
+      width: 60px;
+      height: 36px;
+      text-align: center;
+      border: 2px solid #e8f5e9;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      background-color: #fafafa;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    .quantity-input:focus {
+      border-color: #7cb342;
+      background-color: #fff;
+    }
+    .total-price {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e53935;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .cart-icon {
+      position: absolute;
+      top: 20px;
+      right: 80px;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .cart-icon:hover {
+      transform: scale(1.1);
+    }
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background-color: #e53935;
+      color: #fff;
+      font-size: 12px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-add-cart {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff9800;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 5px;
+    }
+    .btn-add-cart:hover {
+      background-color: #f57c00;
+    }
+    .cart-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .cart-panel {
+      background-color: #fff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 20px 20px 0 0;
+      padding: 20px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .cart-header h3 {
+      font-size: 18px;
+      color: #333;
+    }
+    .cart-close {
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+    }
+    .cart-close:hover {
+      color: #333;
+    }
+    .cart-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .cart-item-image {
+      width: 60px;
+      height: 60px;
+      background-color: #f5f5f5;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-right: 15px;
+    }
+    .cart-item-info {
+      flex: 1;
+    }
+    .cart-item-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    .cart-item-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: #e53935;
+    }
+    .cart-item-quantity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .cart-item-remove {
+      color: #999;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .cart-item-remove:hover {
+      color: #e53935;
+    }
+    .cart-footer {
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+      margin-top: 10px;
+    }
+    .cart-select-all {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+    .cart-select-all input {
+      width: 18px;
+      height: 18px;
+    }
+    .cart-select-all span {
+      font-size: 14px;
+      color: #333;
+    }
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .cart-total-label {
+      font-size: 16px;
+      color: #666;
+    }
+    .cart-total-amount {
+      font-size: 24px;
+      font-weight: 700;
+      color: #e53935;
+    }
+    .cart-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-cart-clear {
+      flex: 1;
+      padding: 15px;
+      background-color: #f5f5f5;
+      color: #666;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-cart-clear:hover {
+      background-color: #eee;
+    }
+    .btn-cart-checkout {
+      flex: 2;
+      padding: 15px;
+      background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-cart-checkout:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(124, 179, 66, 0.4);
+    }
+    .btn-cart-checkout:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .address-section {
+      margin-bottom: 20px;
+    }
+    .address-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .address-header h4 {
+      color: #558b2f;
+      font-size: 16px;
+      margin: 0;
+    }
+    .btn-add-address {
+      padding: 8px 16px;
+      background-color: #7cb342;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-add-address:hover {
+      background-color: #558b2f;
+    }
+    .address-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .address-card {
+      background-color: #fff;
+      border: 2px solid #e8f5e9;
+      border-radius: 12px;
+      padding: 15px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .address-card:hover {
+      border-color: #7cb342;
+    }
+    .address-card.selected {
+      border-color: #7cb342;
+      background-color: #f1f8e9;
+    }
+    .address-card.default {
+      border-color: #ff9800;
+    }
+    .address-default-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #ff9800;
+      color: #fff;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .address-radio {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+    }
+    .address-content {
+      margin-left: 35px;
+    }
+    .address-name {
+      font-weight: 600;
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    .address-phone {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .address-detail {
+      color: #555;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .address-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-address-action {
+      padding: 6px 12px;
+      background-color: #f5f5f5;
+      color: #666;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-address-action:hover {
+      background-color: #7cb342;
+      color: #fff;
+    }
+    .btn-address-delete:hover {
+      background-color: #e53935;
+    }
+    .address-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .address-modal {
+      background-color: #fff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 15px;
+      padding: 25px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .address-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .address-modal-header h3 {
+      font-size: 18px;
+      color: #333;
+      margin: 0;
+    }
+    .address-modal-close {
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+    }
+    .address-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .address-form input, .address-form select, .address-form textarea {
+      padding: 12px;
+      border: 2px solid #e8f5e9;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    .address-form input:focus, .address-form select:focus, .address-form textarea:focus {
+      border-color: #7cb342;
+    }
+    .address-form textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .address-form-row {
+      display: flex;
+      gap: 10px;
+    }
+    .address-form-row input, .address-form-row select {
+      flex: 1;
+    }
+    .address-form-row .short-input {
+      flex: 0.5;
+    }
+    .address-default-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .address-default-checkbox input {
+      width: 18px;
+      height: 18px;
+    }
+    .address-default-checkbox span {
+      font-size: 14px;
+      color: #333;
+    }
+    .address-form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn-address-save {
+      flex: 2;
+      padding: 15px;
+      background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-address-save:hover {
+      transform: translateY(-2px);
+    }
+    .btn-address-cancel {
+      flex: 1;
+      padding: 15px;
+      background-color: #f5f5f5;
+      color: #666;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-address-cancel:hover {
+      background-color: #eee;
+    }
+    
+    .toast-overlay {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5000;
+      animation: toastSlideIn 0.3s ease;
+    }
+    .toast {
+      padding: 15px 25px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .toast-success {
+      background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+    }
+    .toast-error {
+      background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+    }
+    .toast-warning {
+      background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    }
+    .toast-info {
+      background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    }
+    .toast-icon {
+      font-size: 18px;
+    }
+    
+    .confirm-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 4000;
+      animation: fadeIn 0.2s ease;
+      padding: 20px;
+    }
+    .confirm-modal {
+      background-color: #fff;
+      border-radius: 16px;
+      padding: 30px;
+      min-width: 300px;
+      max-width: 90%;
+      text-align: center;
+      animation: modalSlideUp 0.3s ease;
+    }
+    .confirm-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+    .confirm-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .confirm-message {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .confirm-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .btn-confirm-cancel {
+      padding: 12px 24px;
+      background-color: #f5f5f5;
+      color: #666;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-confirm-cancel:hover {
+      background-color: #eee;
+    }
+    .btn-confirm-ok {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-confirm-ok:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(124, 179, 66, 0.4);
+    }
+    
+    @keyframes toastSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes modalSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .order-section {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #e8f5e9;
+      border-radius: 15px;
+    }
+    .order-section h3 {
+      color: #558b2f;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    .order-status {
+      margin-top: 15px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.8;
+    }
+    .error-message {
+      color: #e53935;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .success-message {
+      color: #558b2f;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #7cb342;
+    }
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .logout-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    .header-with-logout {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <div class="header" :class="{ 'header-with-logout': isLoggedIn }">
+      <h1>零食很忙</h1>
+      <div v-if="isLoggedIn" class="cart-icon" @click="showCart = true">
+        🛒
+        <span v-if="cartItemCount > 0" class="cart-badge">{{ cartItemCount }}</span>
+      </div>
+      <button v-if="isLoggedIn" class="logout-btn" @click="logout">退出</button>
+    </div>
+    
+    <div class="content">
+      <div v-if="!isLoggedIn">
+        <div v-if="!showRegister" class="login-form">
+          <input 
+            v-model="phone" 
+            type="tel" 
+            placeholder="请输入手机号" 
+            maxlength="11"
+            @keyup.enter="login"
+          />
+          <input 
+            v-model="password" 
+            type="password" 
+            placeholder="请输入密码" 
+            @keyup.enter="login"
+          />
+          <button class="btn btn-primary" @click="login">登录</button>
+          <div v-if="error" class="error-message">{{ error }}</div>
+          <div class="toggle-link" @click="toggleForm">还没有账号？立即注册</div>
+        </div>
+        
+        <div v-else class="register-form">
+          <input 
+            v-model="regPhone" 
+            type="tel" 
+            placeholder="请输入手机号" 
+            maxlength="11"
+            @keyup.enter="register"
+          />
+          <input 
+            v-model="regPassword" 
+            type="password" 
+            placeholder="请输入密码" 
+            @keyup.enter="register"
+          />
+          <input 
+            v-model="regNickname" 
+            type="text" 
+            placeholder="请输入昵称（可选）" 
+            @keyup.enter="register"
+          />
+          <button class="btn btn-primary" @click="register">注册</button>
+          <div v-if="error" class="error-message">{{ error }}</div>
+          <div v-if="success" class="success-message">{{ success }}</div>
+          <div class="toggle-link" @click="toggleForm">已有账号？立即登录</div>
+        </div>
+      </div>
+      
+      <div v-else>
+        <div v-if="loading" class="loading">加载中...</div>
+        
+        <div v-if="!loading && showProductList" class="product-list">
+          <div 
+            v-for="product in products" 
+            :key="product.id" 
+            class="product-card"
+          >
+            <div class="product-image">🍪</div>
+            <div class="product-info">
+              <div class="product-name">{{ product.name }}</div>
+              <div class="product-price">¥{{ product.price.toFixed(2) }}</div>
+              <div class="product-stock">库存: {{ product.stock }}</div>
+              <div v-if="product.stock > 0" class="quantity-control">
+                <button 
+                  class="quantity-btn" 
+                  @click="decreaseQuantity(product.id)"
+                  :disabled="getQuantity(product.id) <= 1"
+                >-</button>
+                <input 
+                  type="number" 
+                  class="quantity-input" 
+                  :value="getQuantity(product.id)"
+                  @input="updateQuantity(product.id, $event)"
+                  @change="validateQuantity(product)"
+                  min="1"
+                  :max="product.stock"
+                />
+                <button 
+                  class="quantity-btn" 
+                  @click="increaseQuantity(product.id, product.stock)"
+                  :disabled="getQuantity(product.id) >= product.stock"
+                >+</button>
+              </div>
+              <div v-if="product.stock > 0" class="total-price">
+                合计: ¥{{ getTotalPrice(product).toFixed(2) }}
+              </div>
+              <button 
+                class="btn-add-cart" 
+                @click="addToCart(product)"
+                :disabled="product.stock <= 0"
+              >
+                {{ product.stock <= 0 ? '已售罄' : '加入购物车' }}
+              </button>
+              <button 
+                class="btn-buy" 
+                @click="buyProduct(product)"
+                :disabled="product.stock <= 0"
+              >
+                {{ product.stock <= 0 ? '已售罄' : '立即购买' }}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div v-if="!loading && showOrderSection" class="order-section">
+          <div class="address-section">
+            <div class="address-header">
+              <h4>🏠 收货地址</h4>
+              <button class="btn-add-address" @click="openAddAddress">+ 新增地址</button>
+            </div>
+            
+            <div v-if="addresses.length === 0" class="address-card" style="text-align: center; padding: 20px;">
+              <p style="color: #999;">暂无收货地址</p>
+              <button class="btn-add-address" style="margin-top: 10px;" @click="openAddAddress">添加收货地址</button>
+            </div>
+            
+            <div v-else class="address-list">
+              <div 
+                v-for="address in addresses" 
+                :key="address.id" 
+                class="address-card"
+                :class="{ 
+                  'selected': selectedAddressId === address.id,
+                  'default': address.isDefault
+                }"
+              >
+                <input 
+                  type="radio" 
+                  class="address-radio" 
+                  :checked="selectedAddressId === address.id"
+                  @change="selectAddress(address.id)"
+                />
+                <span v-if="address.isDefault" class="address-default-badge">默认</span>
+                <div class="address-content">
+                  <div class="address-name">{{ address.name }} {{ address.phone }}</div>
+                  <div class="address-detail">{{ address.province }}{{ address.city }}{{ address.district }}{{ address.detail }}</div>
+                  <div class="address-actions">
+                    <button class="btn-address-action" @click.stop="openEditAddress(address)">编辑</button>
+                    <button 
+                      class="btn-address-action btn-address-delete" 
+                      @click.stop="deleteAddress(address.id)"
+                    >删除</button>
+                    <button 
+                      v-if="!address.isDefault" 
+                      class="btn-address-action" 
+                      @click.stop="setDefaultAddress(address.id)"
+                    >设为默认</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <h3>订单信息</h3>
+          <p>订单ID: {{ orderId }}</p>
+          <button v-if="!paid" class="btn btn-primary" @click="payOrder">去支付</button>
+          <div v-if="paid" class="order-status">
+            <p><strong>订单状态:</strong> {{ orderStatus }}</p>
+            <p><strong>订单ID:</strong> {{ orderId }}</p>
+            <p><strong>支付金额:</strong> ¥{{ payAmount.toFixed(2) }}</p>
+          </div>
+          <button v-if="paid" class="btn btn-primary" style="margin-top: 15px;" @click="resetOrder">继续购物</button>
+        </div>
+        
+        <div v-if="!loading && !showProductList && !showOrderSection" class="product-list">
+          <div class="product-card" style="grid-column: span 2; text-align: center; padding: 40px;">
+            <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
+            <div style="font-size: 18px; color: #333;">支付成功!</div>
+            <button class="btn btn-primary" style="margin-top: 20px;" @click="resetOrder">继续购物</button>
+          </div>
+        </div>
+      </div>
+      
+      <div v-if="showCart" class="cart-overlay" @click.self="showCart = false">
+        <div class="cart-panel">
+          <div class="cart-header">
+            <h3>🛒 购物车 ({{ cartItemCount }})</h3>
+            <span class="cart-close" @click="showCart = false">×</span>
+          </div>
+          
+          <div v-if="cartItems.length === 0" class="cart-empty">
+            <div style="font-size: 48px; margin-bottom: 10px;">🛒</div>
+            <p>购物车是空的</p>
+            <p style="font-size: 12px; margin-top: 5px;">快去添加商品吧</p>
+          </div>
+          
+          <div v-else>
+            <div v-for="item in cartItems" :key="item.productId" class="cart-item">
+              <div class="cart-item-image">🍪</div>
+              <div class="cart-item-info">
+                <div class="cart-item-name">{{ item.name }}</div>
+                <div class="cart-item-price">¥{{ item.price.toFixed(2) }}</div>
+                <div class="cart-item-quantity">
+                  <button 
+                    class="quantity-btn" 
+                    @click="updateCartQuantity(item.productId, item.quantity - 1)"
+                    :disabled="item.quantity <= 1"
+                  >-</button>
+                  <span style="font-weight: 600; min-width: 30px; text-align: center; display: inline-block;">{{ item.quantity }}</span>
+                  <button 
+                    class="quantity-btn" 
+                    @click="updateCartQuantity(item.productId, item.quantity + 1)"
+                    :disabled="item.quantity >= item.stock"
+                  >+</button>
+                  <span class="cart-item-remove" @click="removeFromCart(item.productId)">删除</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="cart-footer">
+              <div class="cart-select-all" @click="toggleSelectAll">
+                <input type="checkbox" v-model="selectAll" />
+                <span>全选</span>
+              </div>
+              
+              <div class="cart-total">
+                <span class="cart-total-label">合计:</span>
+                <span class="cart-total-amount">¥{{ selectedTotal.toFixed(2) }}</span>
+              </div>
+              
+              <div class="cart-actions">
+                <button class="btn-cart-clear" @click="clearCart">清空购物车</button>
+                <button 
+                  class="btn-cart-checkout" 
+                  @click="checkout"
+                  :disabled="selectedCount === 0"
+                >
+                  结算 ({{ selectedCount }})
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div v-if="showAddressModal" class="address-modal-overlay" @click.self="closeAddressModal">
+        <div class="address-modal">
+          <div class="address-modal-header">
+            <h3>{{ editingAddress ? '编辑地址' : '新增收货地址' }}</h3>
+            <span class="address-modal-close" @click="closeAddressModal">×</span>
+          </div>
+          
+          <div class="address-form">
+            <input 
+              v-model="addressForm.name" 
+              type="text" 
+              placeholder="收货人姓名"
+            />
+            <input 
+              v-model="addressForm.phone" 
+              type="tel" 
+              placeholder="手机号"
+              maxlength="11"
+            />
+            <div class="address-form-row">
+              <select v-model="addressForm.province">
+                <option value="">请选择省份</option>
+                <option v-for="p in provinces" :key="p.code" :value="p.code">{{ p.name }}</option>
+              </select>
+              <select v-model="addressForm.city">
+                <option value="">请选择城市</option>
+                <option v-for="c in currentCities" :key="c.code" :value="c.code">{{ c.name }}</option>
+              </select>
+              <select v-model="addressForm.district">
+                <option value="">请选择区/县</option>
+                <option v-for="d in currentDistricts" :key="d.code" :value="d.code">{{ d.name }}</option>
+              </select>
+            </div>
+            <textarea 
+              v-model="addressForm.detail" 
+              placeholder="详细地址"
+            ></textarea>
+            <div class="address-default-checkbox">
+              <input type="checkbox" v-model="addressForm.isDefault" />
+              <span>设为默认地址</span>
+            </div>
+            
+            <div class="address-form-actions">
+              <button class="btn-address-cancel" @click="closeAddressModal">取消</button>
+              <button class="btn-address-save" @click="saveAddress">保存</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div v-if="showToast" class="toast-overlay">
+        <div class="toast" :class="'toast-' + toastType">
+          <span class="toast-icon">{{ toastIcon }}</span>
+          <span>{{ toastMessage }}</span>
+        </div>
+      </div>
+      
+      <div v-if="showConfirm" class="confirm-overlay" @click.self="cancelConfirm">
+        <div class="confirm-modal">
+          <div class="confirm-icon">{{ confirmIcon }}</div>
+          <div class="confirm-title">{{ confirmTitle }}</div>
+          <div class="confirm-message">{{ confirmMessage }}</div>
+          <div class="confirm-actions">
+            <button class="btn-confirm-cancel" @click="cancelConfirm">取消</button>
+            <button class="btn-confirm-ok" @click="confirmAction">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref, computed, onMounted } = Vue
+
+    createApp({
+      setup() {
+        const phone = ref('')
+        const password = ref('')
+        const regPhone = ref('')
+        const regPassword = ref('')
+        const regNickname = ref('')
+        const error = ref('')
+        const success = ref('')
+        const loading = ref(false)
+        const products = ref([])
+        const orderId = ref('')
+        const payAmount = ref(0)
+        const paid = ref(false)
+        const orderStatus = ref('')
+        const showRegister = ref(false)
+        const quantities = ref({})
+        const showCart = ref(false)
+        const cartItems = ref([])
+        const selectedItems = ref(new Set())
+        const selectAll = ref(false)
+        
+        const showToast = ref(false)
+        const toastType = ref('success')
+        const toastMessage = ref('')
+        const toastIcon = computed(() => {
+          const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+          }
+          return icons[toastType.value] || 'ℹ️'
+        })
+        
+        const showConfirm = ref(false)
+        const confirmTitle = ref('')
+        const confirmMessage = ref('')
+        const confirmIcon = ref('❓')
+        const confirmCallback = ref(null)
+        
+        const addresses = ref([])
+        const selectedAddressId = ref(null)
+        const showAddressModal = ref(false)
+        const editingAddress = ref(null)
+        const addressForm = ref({
+          name: '',
+          phone: '',
+          province: '',
+          city: '',
+          district: '',
+          detail: '',
+          isDefault: false
+        })
+        
+        const provinces = [
+          { code: '110000', name: '北京市' },
+          { code: '310000', name: '上海市' },
+          { code: '440000', name: '广东省' },
+          { code: '330000', name: '浙江省' },
+          { code: '320000', name: '江苏省' },
+          { code: '430000', name: '湖南省' },
+          { code: '420000', name: '湖北省' },
+          { code: '370000', name: '山东省' },
+          { code: '130000', name: '河北省' },
+          { code: '510000', name: '四川省' }
+        ]
+        
+        const cities = {
+          '110000': [{ code: '110100', name: '北京市' }],
+          '310000': [{ code: '310100', name: '上海市' }],
+          '440000': [
+            { code: '440100', name: '广州市' },
+            { code: '440300', name: '深圳市' },
+            { code: '440600', name: '佛山市' },
+            { code: '440700', name: '江门市' }
+          ],
+          '330000': [
+            { code: '330100', name: '杭州市' },
+            { code: '330200', name: '宁波市' },
+            { code: '330300', name: '温州市' },
+            { code: '330700', name: '金华市' }
+          ],
+          '320000': [
+            { code: '320100', name: '南京市' },
+            { code: '320500', name: '苏州市' },
+            { code: '320200', name: '无锡市' },
+            { code: '321000', name: '扬州市' }
+          ],
+          '430000': [
+            { code: '430100', name: '长沙市' },
+            { code: '430200', name: '株洲市' },
+            { code: '430300', name: '湘潭市' },
+            { code: '430600', name: '岳阳市' }
+          ],
+          '420000': [
+            { code: '420100', name: '武汉市' },
+            { code: '420500', name: '宜昌市' },
+            { code: '420300', name: '十堰市' },
+            { code: '420800', name: '荆门市' }
+          ],
+          '370000': [
+            { code: '370100', name: '济南市' },
+            { code: '370200', name: '青岛市' },
+            { code: '370600', name: '烟台市' },
+            { code: '370300', name: '淄博市' }
+          ],
+          '130000': [
+            { code: '130100', name: '石家庄市' },
+            { code: '130300', name: '秦皇岛市' },
+            { code: '130200', name: '唐山市' },
+            { code: '130600', name: '保定市' }
+          ],
+          '510000': [
+            { code: '510100', name: '成都市' },
+            { code: '510300', name: '自贡市' },
+            { code: '510400', name: '攀枝花市' },
+            { code: '510700', name: '绵阳市' }
+          ]
+        }
+        
+        const districts = {
+          '110100': [{ code: '110101', name: '东城区' }, { code: '110102', name: '西城区' }, { code: '110105', name: '朝阳区' }, { code: '110106', name: '丰台区' }],
+          '310100': [{ code: '310101', name: '黄浦区' }, { code: '310104', name: '徐汇区' }, { code: '310105', name: '长宁区' }, { code: '310107', name: '普陀区' }],
+          '440100': [{ code: '440103', name: '荔湾区' }, { code: '440104', name: '越秀区' }, { code: '440105', name: '海珠区' }, { code: '440111', name: '白云区' }],
+          '440300': [{ code: '440303', name: '罗湖区' }, { code: '440304', name: '福田区' }, { code: '440305', name: '南山区' }, { code: '440306', name: '宝安区' }],
+          '440600': [{ code: '440604', name: '禅城区' }, { code: '440605', name: '南海区' }, { code: '440606', name: '顺德区' }, { code: '440607', name: '三水区' }],
+          '440700': [{ code: '440703', name: '蓬江区' }, { code: '440704', name: '江海区' }, { code: '440705', name: '新会区' }, { code: '440781', name: '台山市' }],
+          '330100': [{ code: '330102', name: '上城区' }, { code: '330105', name: '拱墅区' }, { code: '330106', name: '西湖区' }, { code: '330108', name: '滨江区' }],
+          '330200': [{ code: '330203', name: '海曙区' }, { code: '330205', name: '江北区' }, { code: '330206', name: '北仑区' }, { code: '330211', name: '镇海区' }],
+          '330300': [{ code: '330302', name: '鹿城区' }, { code: '330303', name: '龙湾区' }, { code: '330304', name: '瓯海区' }, { code: '330324', name: '永嘉县' }],
+          '330700': [{ code: '330702', name: '婺城区' }, { code: '330703', name: '金东区' }, { code: '330781', name: '兰溪市' }, { code: '330782', name: '义乌市' }],
+          '320100': [{ code: '320102', name: '玄武区' }, { code: '320104', name: '秦淮区' }, { code: '320105', name: '建邺区' }, { code: '320106', name: '鼓楼区' }],
+          '320500': [{ code: '320505', name: '虎丘区' }, { code: '320506', name: '吴中区' }, { code: '320507', name: '相城区' }, { code: '320508', name: '姑苏区' }],
+          '320200': [{ code: '320205', name: '锡山区' }, { code: '320206', name: '惠山区' }, { code: '320211', name: '滨湖区' }, { code: '320213', name: '梁溪区' }],
+          '321000': [{ code: '321002', name: '广陵区' }, { code: '321003', name: '邗江区' }, { code: '321004', name: '江都区' }, { code: '321084', name: '仪征市' }],
+          '430100': [{ code: '430102', name: '芙蓉区' }, { code: '430103', name: '天心区' }, { code: '430104', name: '岳麓区' }, { code: '430105', name: '开福区' }],
+          '430200': [{ code: '430202', name: '荷塘区' }, { code: '430203', name: '芦淞区' }, { code: '430204', name: '石峰区' }, { code: '430211', name: '天元区' }],
+          '430300': [{ code: '430302', name: '雨湖区' }, { code: '430304', name: '岳塘区' }, { code: '430321', name: '湘潭县' }, { code: '430381', name: '湘乡市' }],
+          '430600': [{ code: '430602', name: '岳阳楼区' }, { code: '430603', name: '云溪区' }, { code: '430611', name: '君山区' }, { code: '430621', name: '岳阳县' }],
+          '420100': [{ code: '420102', name: '江岸区' }, { code: '420103', name: '江汉区' }, { code: '420104', name: '硚口区' }, { code: '420105', name: '汉阳区' }],
+          '420500': [{ code: '420502', name: '西陵区' }, { code: '420503', name: '伍家岗区' }, { code: '420504', name: '点军区' }, { code: '420505', name: '猇亭区' }],
+          '420300': [{ code: '420302', name: '茅箭区' }, { code: '420303', name: '张湾区' }, { code: '420321', name: '郧阳区' }, { code: '420381', name: '丹江口市' }],
+          '420800': [{ code: '420802', name: '东宝区' }, { code: '420804', name: '掇刀区' }, { code: '420822', name: '沙洋县' }, { code: '420881', name: '钟祥市' }],
+          '370100': [{ code: '370102', name: '历下区' }, { code: '370103', name: '市中区' }, { code: '370104', name: '槐荫区' }, { code: '370105', name: '天桥区' }],
+          '370200': [{ code: '370202', name: '市南区' }, { code: '370203', name: '市北区' }, { code: '370211', name: '黄岛区' }, { code: '370212', name: '崂山区' }],
+          '370600': [{ code: '370602', name: '芝罘区' }, { code: '370611', name: '福山区' }, { code: '370612', name: '牟平区' }, { code: '370634', name: '莱州市' }],
+          '370300': [{ code: '370302', name: '淄川区' }, { code: '370303', name: '张店区' }, { code: '370304', name: '博山区' }, { code: '370305', name: '临淄区' }],
+          '130100': [{ code: '130102', name: '长安区' }, { code: '130104', name: '桥西区' }, { code: '130105', name: '新华区' }, { code: '130107', name: '裕华区' }],
+          '130300': [{ code: '130302', name: '海港区' }, { code: '130303', name: '山海关区' }, { code: '130304', name: '北戴河区' }, { code: '130321', name: '青龙满族自治县' }],
+          '130200': [{ code: '130202', name: '路南区' }, { code: '130203', name: '路北区' }, { code: '130205', name: '古冶区' }, { code: '130207', name: '丰南区' }],
+          '130600': [{ code: '130602', name: '竞秀区' }, { code: '130606', name: '莲池区' }, { code: '130623', name: '涞水县' }, { code: '130681', name: '涿州市' }],
+          '510100': [{ code: '510104', name: '锦江区' }, { code: '510105', name: '青羊区' }, { code: '510106', name: '金牛区' }, { code: '510107', name: '武侯区' }],
+          '510300': [{ code: '510302', name: '自流井区' }, { code: '510303', name: '贡井区' }, { code: '510304', name: '大安区' }, { code: '510311', name: '沿滩区' }],
+          '510400': [{ code: '510402', name: '东区' }, { code: '510403', name: '西区' }, { code: '510411', name: '仁和区' }, { code: '510422', name: '米易县' }],
+          '510700': [{ code: '510703', name: '涪城区' }, { code: '510704', name: '游仙区' }, { code: '510722', name: '三台县' }, { code: '510723', name: '盐亭县' }]
+        }
+        
+        const currentCities = computed(() => {
+          if (!addressForm.value.province) return []
+          return cities[addressForm.value.province] || []
+        })
+        
+        const currentDistricts = computed(() => {
+          if (!addressForm.value.city) return []
+          return districts[addressForm.value.city] || []
+        })
+        
+        const loggedIn = ref(false)
+        
+        const isLoggedIn = computed(() => {
+          return loggedIn.value
+        })
+        
+        const showProductList = computed(() => {
+          return isLoggedIn.value && !orderId.value && !paid.value
+        })
+        
+        const showOrderSection = computed(() => {
+          return isLoggedIn.value && (orderId.value || paid.value)
+        })
+
+        const checkLoginStatus = () => {
+          const token = localStorage.getItem('token')
+          loggedIn.value = token !== null
+          loadCart()
+          loadAddresses()
+        }
+
+        const showToastMessage = (message, type = 'success', duration = 2000) => {
+          toastMessage.value = message
+          toastType.value = type
+          showToast.value = true
+          
+          setTimeout(() => {
+            showToast.value = false
+          }, duration)
+        }
+
+        const showSuccess = (message) => showToastMessage(message, 'success')
+        const showError = (message) => showToastMessage(message, 'error')
+        const showWarning = (message) => showToastMessage(message, 'warning')
+        const showInfo = (message) => showToastMessage(message, 'info')
+
+        const showConfirmDialog = (title, message, callback, icon = '❓') => {
+          confirmTitle.value = title
+          confirmMessage.value = message
+          confirmIcon.value = icon
+          confirmCallback.value = callback
+          showConfirm.value = true
+        }
+
+        const confirmAction = () => {
+          if (confirmCallback.value) {
+            confirmCallback.value()
+          }
+          showConfirm.value = false
+        }
+
+        const cancelConfirm = () => {
+          showConfirm.value = false
+        }
+
+        const loadCart = () => {
+          const savedCart = localStorage.getItem('snack_cart')
+          if (savedCart) {
+            try {
+              cartItems.value = JSON.parse(savedCart)
+            } catch (e) {
+              cartItems.value = []
+            }
+          }
+        }
+
+        const saveCart = () => {
+          localStorage.setItem('snack_cart', JSON.stringify(cartItems.value))
+        }
+
+        const loadAddresses = () => {
+          const savedAddresses = localStorage.getItem('snack_addresses')
+          if (savedAddresses) {
+            try {
+              addresses.value = JSON.parse(savedAddresses)
+            } catch (e) {
+              addresses.value = []
+            }
+          }
+        }
+
+        const saveAddresses = () => {
+          localStorage.setItem('snack_addresses', JSON.stringify(addresses.value))
+        }
+
+        const openAddAddress = () => {
+          editingAddress.value = null
+          addressForm.value = {
+            name: '',
+            phone: '',
+            province: '',
+            city: '',
+            district: '',
+            detail: '',
+            isDefault: false
+          }
+          showAddressModal.value = true
+        }
+
+        const openEditAddress = (address) => {
+          editingAddress.value = address
+          addressForm.value = {
+            name: address.name,
+            phone: address.phone,
+            province: address.provinceCode,
+            city: address.cityCode,
+            district: address.districtCode,
+            detail: address.detail,
+            isDefault: address.isDefault
+          }
+          showAddressModal.value = true
+        }
+
+        const closeAddressModal = () => {
+          showAddressModal.value = false
+          editingAddress.value = null
+        }
+
+        const validatePhone = (phone) => {
+          const regex = /^1[3-9]\d{9}$/
+          return regex.test(phone)
+        }
+
+        const saveAddress = () => {
+          if (!addressForm.value.name.trim()) {
+            showError('请输入收货人姓名')
+            return
+          }
+          if (!addressForm.value.phone || !validatePhone(addressForm.value.phone)) {
+            showError('请输入正确的11位手机号')
+            return
+          }
+          if (!addressForm.value.province) {
+            showError('请选择省份')
+            return
+          }
+          if (!addressForm.value.city) {
+            showError('请选择城市')
+            return
+          }
+          if (!addressForm.value.district) {
+            showError('请选择区/县')
+            return
+          }
+          if (!addressForm.value.detail.trim()) {
+            showError('请输入详细地址')
+            return
+          }
+
+          const provinceName = provinces.find(p => p.code === addressForm.value.province)?.name || ''
+          const cityName = currentCities.value.find(c => c.code === addressForm.value.city)?.name || ''
+          const districtName = currentDistricts.value.find(d => d.code === addressForm.value.district)?.name || ''
+
+          if (editingAddress.value) {
+            const index = addresses.value.findIndex(a => a.id === editingAddress.value.id)
+            if (index !== -1) {
+              if (addressForm.value.isDefault && !editingAddress.value.isDefault) {
+                addresses.value.forEach(a => a.isDefault = false)
+              }
+              addresses.value[index] = {
+                ...addresses.value[index],
+                name: addressForm.value.name,
+                phone: addressForm.value.phone,
+                province: provinceName,
+                provinceCode: addressForm.value.province,
+                city: cityName,
+                cityCode: addressForm.value.city,
+                district: districtName,
+                districtCode: addressForm.value.district,
+                detail: addressForm.value.detail,
+                isDefault: addressForm.value.isDefault
+              }
+            }
+          } else {
+            if (addressForm.value.isDefault) {
+              addresses.value.forEach(a => a.isDefault = false)
+            }
+            addresses.value.push({
+              id: Date.now(),
+              name: addressForm.value.name,
+              phone: addressForm.value.phone,
+              province: provinceName,
+              provinceCode: addressForm.value.province,
+              city: cityName,
+              cityCode: addressForm.value.city,
+              district: districtName,
+              districtCode: addressForm.value.district,
+              detail: addressForm.value.detail,
+              isDefault: addressForm.value.isDefault
+            })
+          }
+
+          saveAddresses()
+          closeAddressModal()
+          showSuccess(editingAddress.value ? '地址修改成功' : '地址添加成功')
+        }
+
+        const deleteAddress = (addressId) => {
+          showConfirmDialog('删除确认', '确定要删除这个地址吗？', () => {
+            addresses.value = addresses.value.filter(a => a.id !== addressId)
+            if (selectedAddressId.value === addressId) {
+              selectedAddressId.value = null
+            }
+            saveAddresses()
+            showSuccess('地址已删除')
+          }, '🗑️')
+        }
+
+        const setDefaultAddress = (addressId) => {
+          addresses.value.forEach(a => {
+            a.isDefault = a.id === addressId
+          })
+          saveAddresses()
+          showSuccess('已设为默认地址')
+        }
+
+        const selectAddress = (addressId) => {
+          selectedAddressId.value = addressId
+        }
+
+        const selectedAddress = computed(() => {
+          return addresses.value.find(a => a.id === selectedAddressId.value)
+        })
+
+        const cartItemCount = computed(() => {
+          return cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
+        })
+
+        const selectedCount = computed(() => {
+          return selectedItems.value.size
+        })
+
+        const selectedTotal = computed(() => {
+          return cartItems.value.reduce((sum, item) => {
+            if (selectedItems.value.has(item.productId)) {
+              return sum + item.price * item.quantity
+            }
+            return sum
+          }, 0)
+        })
+
+        const addToCart = (product) => {
+          const quantity = getQuantity(product.id)
+          const existingItem = cartItems.value.find(item => item.productId === product.id)
+          
+          if (existingItem) {
+            const newQuantity = existingItem.quantity + quantity
+            if (newQuantity > product.stock) {
+              showError('添加失败，超出商品库存')
+              return
+            }
+            existingItem.quantity = newQuantity
+          } else {
+            cartItems.value.push({
+              productId: product.id,
+              name: product.name,
+              price: product.price,
+              stock: product.stock,
+              quantity: quantity
+            })
+          }
+          
+          saveCart()
+          setQuantity(product.id, 1)
+          showSuccess('已添加到购物车')
+        }
+
+        const removeFromCart = (productId) => {
+          cartItems.value = cartItems.value.filter(item => item.productId !== productId)
+          selectedItems.value.delete(productId)
+          saveCart()
+        }
+
+        const updateCartQuantity = (productId, newQuantity) => {
+          const item = cartItems.value.find(item => item.productId === productId)
+          if (item) {
+            if (newQuantity < 1) {
+              removeFromCart(productId)
+            } else if (newQuantity > item.stock) {
+              showError('数量不能超过库存')
+            } else {
+              item.quantity = newQuantity
+              saveCart()
+            }
+          }
+        }
+
+        const toggleSelectAll = () => {
+          selectAll.value = !selectAll.value
+          if (selectAll.value) {
+            cartItems.value.forEach(item => {
+              selectedItems.value.add(item.productId)
+            })
+          } else {
+            selectedItems.value.clear()
+          }
+        }
+
+        const clearCart = () => {
+          showConfirmDialog('清空确认', '确定要清空购物车吗？', () => {
+            cartItems.value = []
+            selectedItems.value.clear()
+            selectAll.value = false
+            saveCart()
+            showSuccess('购物车已清空')
+          }, '⚠️')
+        }
+
+        const checkout = async () => {
+          if (selectedItems.value.size === 0) {
+            showError('请选择要结算的商品')
+            return
+          }
+          
+          showCart.value = false
+          loading.value = true
+          
+          try {
+            const token = localStorage.getItem('token')
+            const userId = localStorage.getItem('userId') || 1
+            
+            const selectedProducts = cartItems.value.filter(item => selectedItems.value.has(item.productId))
+            
+            for (const item of selectedProducts) {
+              const response = await fetch('http://localhost:8080/api/order/create', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({
+                  userId: parseInt(userId),
+                  productId: item.productId,
+                  quantity: item.quantity,
+                  shopId: 1
+                })
+              })
+              
+              const data = await response.json()
+              
+              if (!response.ok) {
+                showError(data.message || '下单失败')
+                return
+              }
+              
+              orderId.value = data.id
+              payAmount.value += item.price * item.quantity
+            }
+            
+            selectedProducts.forEach(item => {
+              removeFromCart(item.productId)
+            })
+            
+            showSuccess('下单成功')
+          } catch (err) {
+            showError('网络错误，请稍后重试')
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const toggleForm = () => {
+          showRegister.value = !showRegister.value
+          error.value = ''
+          success.value = ''
+        }
+
+        const login = async () => {
+          if (!phone.value || phone.value.length !== 11) {
+            error.value = '请输入正确的手机号'
+            return
+          }
+          if (!password.value || password.value.length < 6) {
+            error.value = '密码长度不能少于6位'
+            return
+          }
+          
+          loading.value = true
+          error.value = ''
+          
+          try {
+            const response = await fetch('http://localhost:8080/api/user/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ phone: phone.value, password: password.value })
+            })
+            
+            const data = await response.json()
+            
+            if (response.ok && data.token) {
+              localStorage.setItem('token', data.token)
+              localStorage.setItem('userId', data.userId)
+              loggedIn.value = true
+              showSuccess('登录成功')
+              await loadProducts()
+            } else {
+              error.value = data || '登录失败'
+            }
+          } catch (err) {
+            error.value = '网络错误，请稍后重试'
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const register = async () => {
+          if (!regPhone.value || regPhone.value.length !== 11) {
+            error.value = '请输入正确的手机号'
+            return
+          }
+          if (!regPassword.value || regPassword.value.length < 6) {
+            error.value = '密码长度不能少于6位'
+            return
+          }
+          
+          loading.value = true
+          error.value = ''
+          success.value = ''
+          
+          try {
+            const response = await fetch('http://localhost:8080/api/user/register', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ 
+                phone: regPhone.value, 
+                password: regPassword.value,
+                nickname: regNickname.value 
+              })
+            })
+            
+            const data = await response.json()
+            
+            if (response.ok && data.token) {
+              localStorage.setItem('token', data.token)
+              localStorage.setItem('userId', data.userId)
+              loggedIn.value = true
+              showSuccess('注册成功')
+              await loadProducts()
+            } else {
+              error.value = data || '注册失败'
+            }
+          } catch (err) {
+            error.value = '网络错误，请稍后重试'
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const loadProducts = async () => {
+          loading.value = true
+          error.value = ''
+          
+          try {
+            const response = await fetch('http://localhost:8080/api/product/list?shopId=1', {
+              method: 'GET'
+            })
+            
+            const data = await response.json()
+            
+            if (response.ok) {
+              products.value = data
+            } else {
+              showError(data.message || '获取商品失败')
+            }
+          } catch (err) {
+            showError('网络错误，请稍后重试')
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const getQuantity = (productId) => {
+          return quantities.value[productId] || 1
+        }
+
+        const setQuantity = (productId, value) => {
+          quantities.value[productId] = value
+        }
+
+        const increaseQuantity = (productId, maxStock) => {
+          const current = getQuantity(productId)
+          if (current < maxStock) {
+            setQuantity(productId, current + 1)
+          }
+        }
+
+        const decreaseQuantity = (productId) => {
+          const current = getQuantity(productId)
+          if (current > 1) {
+            setQuantity(productId, current - 1)
+          }
+        }
+
+        const updateQuantity = (productId, event) => {
+          let value = parseInt(event.target.value)
+          if (isNaN(value)) {
+            value = 1
+          }
+          setQuantity(productId, value)
+        }
+
+        const validateQuantity = (product) => {
+          let value = getQuantity(product.id)
+          if (isNaN(value) || value < 1) {
+            setQuantity(product.id, 1)
+            showError('数量不能小于1')
+          } else if (value > product.stock) {
+            setQuantity(product.id, product.stock)
+            showError('数量不能超过库存')
+          } else if (!Number.isInteger(value)) {
+            setQuantity(product.id, Math.floor(value))
+            showError('数量必须是整数')
+          }
+        }
+
+        const getTotalPrice = (product) => {
+          return product.price * getQuantity(product.id)
+        }
+
+        const buyProduct = async (product) => {
+          if (product.stock <= 0) return
+          const quantity = getQuantity(product.id)
+          if (quantity > product.stock) {
+            showError('购买数量超过库存')
+            return
+          }
+          
+          loading.value = true
+          
+          try {
+            const token = localStorage.getItem('token')
+            const userId = localStorage.getItem('userId') || 1
+            const response = await fetch('http://localhost:8080/api/order/create', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify({
+                userId: parseInt(userId),
+                productId: product.id,
+                quantity: quantity,
+                shopId: 1
+              })
+            })
+            
+            const data = await response.json()
+            
+            if (response.ok && data.id) {
+              orderId.value = data.id
+              payAmount.value = product.price * quantity
+              showSuccess('下单成功')
+            } else {
+              showError(data.message || '下单失败')
+            }
+          } catch (err) {
+            showError('网络错误，请稍后重试')
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const payOrder = async () => {
+          loading.value = true
+          
+          try {
+            const token = localStorage.getItem('token')
+            const userId = localStorage.getItem('userId') || 1
+            const response = await fetch('http://localhost:8080/api/pay/create', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify({
+                orderId: orderId.value,
+                userId: parseInt(userId),
+                payAmount: payAmount.value
+              })
+            })
+            
+            const data = await response.json()
+            
+            if (response.ok) {
+              paid.value = true
+              showSuccess('支付成功')
+              await getOrderStatus()
+            } else {
+              showError(data.message || '支付失败')
+            }
+          } catch (err) {
+            showError('网络错误，请稍后重试')
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const getOrderStatus = async () => {
+          try {
+            const token = localStorage.getItem('token')
+            const response = await fetch(`http://localhost:8080/api/order/${orderId.value}`, {
+              method: 'GET',
+              headers: {
+                'Authorization': 'Bearer ' + token
+              }
+            })
+            
+            const data = await response.json()
+            
+            if (response.ok) {
+              orderStatus.value = data.status || '未知'
+            } else {
+              orderStatus.value = '查询失败'
+            }
+          } catch (err) {
+            orderStatus.value = '查询失败'
+            console.error(err)
+          }
+        }
+
+        const logout = () => {
+          localStorage.removeItem('token')
+          localStorage.removeItem('userId')
+          loggedIn.value = false
+          phone.value = ''
+          password.value = ''
+          regPhone.value = ''
+          regPassword.value = ''
+          regNickname.value = ''
+          error.value = ''
+          success.value = ''
+          products.value = []
+          orderId.value = ''
+          payAmount.value = 0
+          paid.value = false
+          orderStatus.value = ''
+          showSuccess('已退出登录')
+        }
+
+        const resetOrder = () => {
+          orderId.value = ''
+          payAmount.value = 0
+          paid.value = false
+          orderStatus.value = ''
+          loadProducts()
+        }
+
+        onMounted(() => {
+          checkLoginStatus()
+          if (isLoggedIn.value) {
+            loadProducts()
+          }
+        })
+
+        return {
+          phone,
+          password,
+          regPhone,
+          regPassword,
+          regNickname,
+          error,
+          success,
+          loading,
+          products,
+          orderId,
+          payAmount,
+          paid,
+          orderStatus,
+          showRegister,
+          showCart,
+          cartItems,
+          cartItemCount,
+          selectedItems,
+          selectedCount,
+          selectedTotal,
+          selectAll,
+          isLoggedIn,
+          showProductList,
+          showOrderSection,
+          login,
+          register,
+          toggleForm,
+          buyProduct,
+          payOrder,
+          logout,
+          resetOrder,
+          getQuantity,
+          increaseQuantity,
+          decreaseQuantity,
+          updateQuantity,
+          validateQuantity,
+          getTotalPrice,
+          addToCart,
+          removeFromCart,
+          updateCartQuantity,
+          toggleSelectAll,
+          clearCart,
+          checkout,
+          addresses,
+          selectedAddressId,
+          showAddressModal,
+          editingAddress,
+          addressForm,
+          provinces,
+          currentCities,
+          currentDistricts,
+          openAddAddress,
+          openEditAddress,
+          closeAddressModal,
+          saveAddress,
+          deleteAddress,
+          setDefaultAddress,
+          selectAddress,
+          selectedAddress,
+          showToast,
+          toastType,
+          toastMessage,
+          toastIcon,
+          showConfirm,
+          confirmTitle,
+          confirmMessage,
+          confirmIcon,
+          confirmAction,
+          cancelConfirm,
+          showSuccess,
+          showError,
+          showWarning,
+          showInfo,
+          showConfirmDialog
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>

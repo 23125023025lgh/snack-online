@@ -43,7 +43,11 @@ public class OrderService {
                 request.getShopId()
         );
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        
+        productFeignClient.decreaseStock(request.getProductId(), request.getQuantity());
+        
+        return savedOrder;
     }
 
     public Order getOrderById(Long id) {

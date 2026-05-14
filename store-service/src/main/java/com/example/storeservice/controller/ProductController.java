@@ -33,4 +33,14 @@ public class ProductController {
         Product createdProduct = productService.createProduct(product);
         return ResponseEntity.ok(createdProduct);
     }
+
+    @PutMapping("/{id}/stock")
+    public ResponseEntity<?> decreaseStock(@PathVariable Long id, @RequestParam Integer quantity) {
+        try {
+            Product product = productService.decreaseStock(id, quantity);
+            return ResponseEntity.ok(product);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

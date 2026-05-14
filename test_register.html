@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>注册测试</title>
+    <script>
+        async function testRegister() {
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const nickname = document.getElementById('nickname').value;
+            
+            try {
+                document.getElementById('result').innerHTML = '正在注册...';
+                
+                const response = await fetch('http://localhost:8080/api/user/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phone, password, nickname })
+                });
+                
+                const text = await response.text();
+                console.log('Response:', text);
+                
+                try {
+                    const data = JSON.parse(text);
+                    if (response.ok && data.token) {
+                        document.getElementById('result').innerHTML = '<span style="color:green">注册成功!</span><br>Token: ' + data.token;
+                    } else {
+                        document.getElementById('result').innerHTML = '<span style="color:red">注册失败: ' + data + '</span>';
+                    }
+                } catch (e) {
+                    document.getElementById('result').innerHTML = '<span style="color:red">解析错误: ' + text + '</span>';
+                }
+            } catch (err) {
+                document.getElementById('result').innerHTML = '<span style="color:red">网络错误: ' + err.message + '</span>';
+                console.error('Error:', err);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>注册测试页面</h1>
+    <input type="tel" id="phone" placeholder="手机号" value="15338452286"><br><br>
+    <input type="password" id="password" placeholder="密码" value="123456"><br><br>
+    <input type="text" id="nickname" placeholder="昵称" value="测试用户"><br><br>
+    <button onclick="testRegister()">注册</button>
+    <div id="result"></div>
+</body>
+</html>

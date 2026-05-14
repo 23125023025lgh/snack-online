@@ -5,7 +5,7 @@ spring:
   application:
     name: store-service
   datasource:
-    url: jdbc:mysql://localhost:3306/db_store?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/db_store?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=utf8
     username: root
     password: L050325lgh@
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -20,4 +20,4 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 127.0.0.1:8899

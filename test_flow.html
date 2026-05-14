@@ -1,0 +1,209 @@
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;流程测试&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+    .success { background-color: #d4edda; border-color: #c3e6cb; }
+    .error { background-color: #f8d7da; border-color: #f5c6cb; }
+    .info { background-color: #d1ecf1; border-color: #bee5eb; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;零食很忙 - 流程测试&lt;/h1&gt;
+  
+  &lt;div class="section"&gt;
+    &lt;h2&gt;1. 登录测试&lt;/h2&gt;
+    &lt;input type="text" id="phone" placeholder="手机号" value="13800138000" style="padding: 8px; width: 200px;"&gt;
+    &lt;button onclick="testLogin()"&gt;登录&lt;/button&gt;
+    &lt;div id="loginResult"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="section"&gt;
+    &lt;h2&gt;2. 获取商品列表&lt;/h2&gt;
+    &lt;button onclick="testProducts()"&gt;获取商品&lt;/button&gt;
+    &lt;div id="productsResult"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="section"&gt;
+    &lt;h2&gt;3. 创建订单&lt;/h2&gt;
+    &lt;button onclick="testOrder()"&gt;下单测试&lt;/button&gt;
+    &lt;div id="orderResult"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="section"&gt;
+    &lt;h2&gt;4. 支付订单&lt;/h2&gt;
+    &lt;button onclick="testPay()"&gt;支付测试&lt;/button&gt;
+    &lt;div id="payResult"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="section"&gt;
+    &lt;h2&gt;调试信息&lt;/h2&gt;
+    &lt;div id="debug"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    let currentOrderId = null;
+    
+    function log(message, isError = false) {
+      const debug = document.getElementById('debug');
+      const time = new Date().toLocaleTimeString();
+      debug.innerHTML += `&lt;div class="${isError ? 'error' : 'info'}"&gt;[${time}] ${message}&lt;/div&gt;`;
+    }
+    
+    async function testLogin() {
+      const phone = document.getElementById('phone').value;
+      log('开始登录...');
+      
+      try {
+        const response = await fetch('http://localhost:8080/api/user/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: phone })
+        });
+        
+        const data = await response.json();
+        const resultDiv = document.getElementById('loginResult');
+        
+        if (response.ok &amp;&amp; data.token) {
+          localStorage.setItem('token', data.token);
+          resultDiv.innerHTML = `&lt;div class="success"&gt;&lt;strong&gt;登录成功！&lt;/strong&gt;&lt;pre&gt;${JSON.stringify(data, null, 2)}&lt;/pre&gt;&lt;/div&gt;`;
+          log('登录成功，Token已保存');
+        } else {
+          resultDiv.innerHTML = `&lt;div class="error"&gt;&lt;strong&gt;登录失败！&lt;/strong&gt;&lt;pre&gt;${JSON.stringify(data, null, 2)}&lt;/pre&gt;&lt;/div&gt;`;
+          log('登录失败', true);
+        }
+      } catch (err) {
+        document.getElementById('loginResult').innerHTML = `&lt;div class="error"&gt;&lt;strong&gt;网络错误！&lt;/strong&gt;${err.message}&lt;/div&gt;`;
+        log('网络错误: ' + err.message, true);
+        console.error(err);
+      }
+    }
+    
+    async function testProducts() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        document.getElementById('productsResult').innerHTML = `&lt;div class="error"&gt;请先登录！&lt;/div&gt;`;
+        return;
+      }
+      
+      log('开始获取商品列表...');
+      
+      try {
+        const response = await fetch('http://localhost:8080/api/product/list?shopId=1', {
+          method: 'GET',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        
+        const data = await response.json();
+        const resultDiv = document.getElementById('productsResult');
+        
+        if (response.ok) {
+          resultDiv.innerHTML = `&lt;div class="success"&gt;&lt;strong&gt;获取商品成功！共 ${data.length} 个商品&lt;/strong&gt;&lt;pre&gt;${JSON.stringify(data, null, 2)}&lt;/pre&gt;&lt;/div&gt;`;
+          log(`获取到 ${data.length} 个商品`);
+        } else {
+          resultDiv.innerHTML = `&lt;div class="error"&gt;&lt;strong&gt;获取商品失败！&lt;/strong&gt;&lt;pre&gt;${JSON.stringify(data, null, 2)}&lt;/pre&gt;&lt;/div&gt;`;
+          log('获取商品失败', true);
+        }
+      } catch (err) {
+        document.getElementById('productsResult').innerHTML = `&lt;div class="error"&gt;&lt;strong&gt;网络错误！&lt;/strong&gt;${err.message}&lt;/div&gt;`;
+        log('网络错误: ' + err.message, true);
+        console.error(err);
+      }
+    }
+    
+    async function testOrder() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        document.getElementById('orderResult').innerHTML = `&lt;div class="error"&gt;请先登录！&lt;/div&gt;`;
+        return;
+      }
+      
+      log('开始创建订单...');
+      
+      try {
+        const response = await fetch('http://localhost:8080/api/order/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            userId: 1,
+            productId: 1,
+            quantity: 1,
+            shopId: 1
+          })
+        });
+        
+        const data = await response.json();
+        const resultDiv = document.getElementById('orderResult');
+        
+        if (response.ok &amp;&amp; data.orderId) {
+          currentOrderId = data.orderId;
+          resultDiv.innerHTML = `&lt;div class="success"&gt;&lt;strong&gt;订单创建成功！&lt;/strong&gt;&lt;pre&gt;${JSON.stringify(data, null, 2)}&lt;/pre&gt;&lt;/div&gt;`;
+          log(`订单创建成功，订单号: ${data.orderId}`);
+        } else {
+          resultDiv.innerHTML = `&lt;div class="error"&gt;&lt;strong&gt;订单创建失败！&lt;/strong&gt;&lt;pre&gt;${JSON.stringify(data, null, 2)}&lt;/pre&gt;&lt;/div&gt;`;
+          log('订单创建失败', true);
+        }
+      } catch (err) {
+        document.getElementById('orderResult').innerHTML = `&lt;div class="error"&gt;&lt;strong&gt;网络错误！&lt;/strong&gt;${err.message}&lt;/div&gt;`;
+        log('网络错误: ' + err.message, true);
+        console.error(err);
+      }
+    }
+    
+    async function testPay() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        document.getElementById('payResult').innerHTML = `&lt;div class="error"&gt;请先登录！&lt;/div&gt;`;
+        return;
+      }
+      
+      if (!currentOrderId) {
+        document.getElementById('payResult').innerHTML = `&lt;div class="error"&gt;请先创建订单！&lt;/div&gt;`;
+        return;
+      }
+      
+      log('开始支付...');
+      
+      try {
+        const response = await fetch('http://localhost:8080/api/pay/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            orderId: currentOrderId,
+            userId: 1,
+            payAmount: 9.9
+          })
+        });
+        
+        const data = await response.json();
+        const resultDiv = document.getElementById('payResult');
+        
+        if (response.ok) {
+          resultDiv.innerHTML = `&lt;div class="success"&gt;&lt;strong&gt;支付成功！&lt;/strong&gt;&lt;pre&gt;${JSON.stringify(data, null, 2)}&lt;/pre&gt;&lt;/div&gt;`;
+          log('支付成功');
+        } else {
+          resultDiv.innerHTML = `&lt;div class="error"&gt;&lt;strong&gt;支付失败！&lt;/strong&gt;&lt;pre&gt;${JSON.stringify(data, null, 2)}&lt;/pre&gt;&lt;/div&gt;`;
+          log('支付失败', true);
+        }
+      } catch (err) {
+        document.getElementById('payResult').innerHTML = `&lt;div class="error"&gt;&lt;strong&gt;网络错误！&lt;/strong&gt;${err.message}&lt;/div&gt;`;
+        log('网络错误: ' + err.message, true);
+        console.error(err);
+      }
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;

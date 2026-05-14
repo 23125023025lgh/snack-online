@@ -25,4 +25,16 @@ public class ProductService {
     public Product createProduct(Product product) {
         return productRepository.save(product);
     }
+
+    public Product decreaseStock(Long id, Integer quantity) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("商品不存在"));
+        
+        if (product.getStock() < quantity) {
+            throw new IllegalArgumentException("库存不足");
+        }
+        
+        product.setStock(product.getStock() - quantity);
+        return productRepository.save(product);
+    }
 }

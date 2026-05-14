@@ -2,6 +2,7 @@ package com.example.storeservice.controller;
 
 import com.example.storeservice.dto.LoginRequest;
 import com.example.storeservice.dto.LoginResponse;
+import com.example.storeservice.dto.RegisterRequest;
 import com.example.storeservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,22 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        LoginResponse response = userService.login(request.getPhone());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            LoginResponse response = userService.login(request.getPhone(), request.getPassword());
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        try {
+            LoginResponse response = userService.register(request);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

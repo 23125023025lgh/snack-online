@@ -34,7 +34,7 @@ public class PaymentController {
     public ResponseEntity<?> getPaymentStatus(@PathVariable Long orderId) {
         try {
             Payment payment = paymentService.getPaymentByOrderId(orderId);
-            return ResponseEntity.ok(payment);
+            return ResponseEntity.ok(payment.getStatus());
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }

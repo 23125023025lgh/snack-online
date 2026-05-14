@@ -8,6 +8,11 @@ import java.time.LocalDateTime;
 @Table(name = "payment")
 public class Payment {
 
+    public static final String STATUS_PENDING = "待支付";
+    public static final String STATUS_PROCESSING = "处理中";
+    public static final String STATUS_SUCCESS = "支付成功";
+    public static final String STATUS_FAILED = "支付失败";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

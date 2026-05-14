@@ -1,0 +1,561 @@
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;
+  &lt;title&gt;零食很忙 (调试版)&lt;/title&gt;
+  &lt;script src="https://unpkg.com/vue@3/dist/vue.global.js"&gt;&lt;/script&gt;
+  &lt;style&gt;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f0f9f0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      background-color: #fff;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(124, 179, 66, 0.3);
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .content {
+      padding: 20px;
+    }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .login-form input {
+      padding: 15px;
+      border: 2px solid #e8f5e9;
+      border-radius: 10px;
+      font-size: 16px;
+      background-color: #fafafa;
+      transition: all 0.3s ease;
+    }
+    .login-form input:focus {
+      outline: none;
+      border-color: #7cb342;
+      background-color: #fff;
+    }
+    .btn {
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(124, 179, 66, 0.4);
+    }
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    .product-card {
+      background-color: #fff;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: 1px solid #eee;
+    }
+    .product-image {
+      width: 100%;
+      height: 120px;
+      background-color: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+    .product-info {
+      padding: 12px;
+    }
+    .product-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .product-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e53935;
+      margin-bottom: 5px;
+    }
+    .product-stock {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .btn-buy {
+      width: 100%;
+      padding: 10px;
+      background-color: #7cb342;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-buy:hover {
+      background-color: #558b2f;
+    }
+    .btn-buy:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .order-section {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #e8f5e9;
+      border-radius: 15px;
+    }
+    .order-section h3 {
+      color: #558b2f;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    .order-status {
+      margin-top: 15px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.8;
+    }
+    .error-message {
+      color: #e53935;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #7cb342;
+    }
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .logout-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    .header-with-logout {
+      position: relative;
+    }
+    .debug-panel {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f0f0f0;
+      border-radius: 10px;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .debug-log {
+      margin: 5px 0;
+      padding: 5px;
+      border-left: 3px solid #ccc;
+      padding-left: 10px;
+    }
+    .debug-log.success { border-left-color: #7cb342; }
+    .debug-log.error { border-left-color: #e53935; }
+    .debug-log.info { border-left-color: #2196f3; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container" id="app"&gt;
+    &lt;div class="header" :class="{ 'header-with-logout': isLoggedIn }"&gt;
+      &lt;h1&gt;零食很忙 (调试版)&lt;/h1&gt;
+      &lt;button v-if="isLoggedIn" class="logout-btn" @click="logout"&gt;退出&lt;/button&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="content"&gt;
+      &lt;div v-if="!isLoggedIn" class="login-form"&gt;
+        &lt;input 
+          v-model="phone" 
+          type="tel" 
+          placeholder="请输入手机号" 
+          maxlength="11"
+          @keyup.enter="login"
+        /&gt;
+        &lt;button class="btn btn-primary" @click="login"&gt;登录&lt;/button&gt;
+        &lt;div v-if="error" class="error-message"&gt;{{ error }}&lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;div v-else&gt;
+        &lt;div v-if="loading" class="loading"&gt;加载中...&lt;/div&gt;
+        
+        &lt;div v-if="!loading &amp;&amp; showProductList" class="product-list"&gt;
+          &lt;div v-if="products.length === 0" style="grid-column: span 2; text-align: center; padding: 40px;"&gt;
+            &lt;div style="font-size: 40px; margin-bottom: 10px;"&gt;📦&lt;/div&gt;
+            &lt;div&gt;暂无商品&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div 
+            v-for="product in products" 
+            :key="product.id" 
+            class="product-card"
+          &gt;
+            &lt;div class="product-image"&gt;🍪&lt;/div&gt;
+            &lt;div class="product-info"&gt;
+              &lt;div class="product-name"&gt;{{ product.name }}&lt;/div&gt;
+              &lt;div class="product-price"&gt;¥{{ product.price.toFixed(2) }}&lt;/div&gt;
+              &lt;div class="product-stock"&gt;库存: {{ product.stock }}&lt;/div&gt;
+              &lt;button 
+                class="btn-buy" 
+                @click="buyProduct(product)"
+                :disabled="product.stock &lt;= 0"
+              &gt;
+                {{ product.stock &lt;= 0 ? '已售罄' : '购买' }}
+              &lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div v-if="!loading &amp;&amp; showOrderSection" class="order-section"&gt;
+          &lt;h3&gt;订单信息&lt;/h3&gt;
+          &lt;p&gt;订单ID: {{ orderId }}&lt;/p&gt;
+          &lt;button v-if="!paid" class="btn btn-primary" @click="payOrder"&gt;去支付&lt;/button&gt;
+          &lt;div v-if="paid" class="order-status"&gt;
+            &lt;p&gt;&lt;strong&gt;订单状态:&lt;/strong&gt; {{ orderStatus }}&lt;/p&gt;
+            &lt;p&gt;&lt;strong&gt;订单ID:&lt;/strong&gt; {{ orderId }}&lt;/p&gt;
+            &lt;p&gt;&lt;strong&gt;支付金额:&lt;/strong&gt; ¥{{ payAmount.toFixed(2) }}&lt;/p&gt;
+          &lt;/div&gt;
+          &lt;button v-if="paid" class="btn btn-primary" style="margin-top: 15px;" @click="resetOrder"&gt;继续购物&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;div class="debug-panel"&gt;
+        &lt;h4&gt;调试日志&lt;/h4&gt;
+        &lt;div&gt;
+          &lt;div&gt;登录状态: {{ isLoggedIn ? '✅ 已登录' : '❌ 未登录' }}&lt;/div&gt;
+          &lt;div&gt;商品数量: {{ products.length }}&lt;/div&gt;
+          &lt;div&gt;订单ID: {{ orderId || '无' }}&lt;/div&gt;
+          &lt;div&gt;支付状态: {{ paid ? '✅ 已支付' : '❌ 未支付' }}&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;hr&gt;
+        &lt;div v-for="(log, index) in debugLogs" :key="index" :class="'debug-log ' + log.type"&gt;
+          [{{ log.time }}] {{ log.message }}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    const { createApp, ref, computed, onMounted, nextTick } = Vue
+
+    createApp({
+      setup() {
+        const phone = ref('')
+        const error = ref('')
+        const loading = ref(false)
+        const products = ref([])
+        const orderId = ref('')
+        const payAmount = ref(0)
+        const paid = ref(false)
+        const orderStatus = ref('')
+        const debugLogs = ref([])
+        
+        const addLog = (message, type = 'info') =&gt; {
+          const time = new Date().toLocaleTimeString()
+          debugLogs.value.unshift({ time, message, type })
+          console.log(`[${type.toUpperCase()}] ${message}`)
+          if (debugLogs.value.length &gt; 20) {
+            debugLogs.value.pop()
+          }
+        }
+        
+        const isLoggedIn = computed(() =&gt; {
+          const hasToken = localStorage.getItem('token') !== null
+          addLog(`检查登录状态: ${hasToken ? '已登录' : '未登录'}`)
+          return hasToken
+        })
+        
+        const showProductList = computed(() =&gt; {
+          const show = isLoggedIn.value &amp;&amp; !orderId.value &amp;&amp; !paid.value
+          addLog(`显示商品列表: ${show}`)
+          return show
+        })
+        
+        const showOrderSection = computed(() =&gt; {
+          const show = isLoggedIn.value &amp;&amp; (orderId.value || paid.value)
+          addLog(`显示订单区域: ${show}`)
+          return show
+        })
+
+        const login = async () =&gt; {
+          addLog('开始登录...')
+          if (!phone.value || phone.value.length !== 11) {
+            error.value = '请输入正确的手机号'
+            addLog('手机号格式错误', 'error')
+            return
+          }
+          
+          loading.value = true
+          error.value = ''
+          
+          try {
+            addLog('发送登录请求到 http://localhost:8080/api/user/login')
+            const response = await fetch('http://localhost:8080/api/user/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ phone: phone.value })
+            })
+            
+            addLog(`登录响应状态码: ${response.status}`)
+            const data = await response.json()
+            addLog(`登录响应数据: ${JSON.stringify(data)}`, response.ok ? 'success' : 'error')
+            
+            if (response.ok &amp;&amp; data.token) {
+              localStorage.setItem('token', data.token)
+              addLog('Token已保存到 localStorage', 'success')
+              alert('登录成功')
+              
+              await nextTick()
+              addLog('开始加载商品列表...')
+              await loadProducts()
+              addLog('商品加载完成', 'success')
+            } else {
+              error.value = data.message || '登录失败'
+              addLog('登录失败', 'error')
+            }
+          } catch (err) {
+            error.value = '网络错误，请稍后重试'
+            addLog(`网络错误: ${err.message}`, 'error')
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const loadProducts = async () =&gt; {
+          addLog('loadProducts 函数开始执行')
+          loading.value = true
+          error.value = ''
+          
+          try {
+            const token = localStorage.getItem('token')
+            addLog(`Token: ${token ? token.substring(0, 20) + '...' : 'null'}`)
+            
+            const response = await fetch('http://localhost:8080/api/product/list?shopId=1', {
+              method: 'GET',
+              headers: {
+                'Authorization': 'Bearer ' + token
+              }
+            })
+            
+            addLog(`商品列表响应状态码: ${response.status}`)
+            const data = await response.json()
+            addLog(`商品列表数据: ${JSON.stringify(data)}`, response.ok ? 'success' : 'error')
+            
+            if (response.ok) {
+              products.value = data
+              addLog(`成功加载 ${data.length} 个商品`, 'success')
+            } else {
+              alert(data.message || '获取商品失败')
+              addLog('获取商品失败', 'error')
+            }
+          } catch (err) {
+            alert('网络错误，请稍后重试')
+            addLog(`商品加载错误: ${err.message}`, 'error')
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const buyProduct = async (product) =&gt; {
+          if (product.stock &lt;= 0) return
+          
+          loading.value = true
+          
+          try {
+            const token = localStorage.getItem('token')
+            const response = await fetch('http://localhost:8080/api/order/create', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify({
+                userId: 1,
+                productId: product.id,
+                quantity: 1,
+                shopId: 1
+              })
+            })
+            
+            const data = await response.json()
+            
+            if (response.ok &amp;&amp; data.orderId) {
+              orderId.value = data.orderId
+              payAmount.value = product.price
+              alert('下单成功')
+            } else {
+              alert(data.message || '下单失败')
+            }
+          } catch (err) {
+            alert('网络错误，请稍后重试')
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const payOrder = async () =&gt; {
+          loading.value = true
+          
+          try {
+            const token = localStorage.getItem('token')
+            const response = await fetch('http://localhost:8080/api/pay/create', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify({
+                orderId: orderId.value,
+                userId: 1,
+                payAmount: payAmount.value
+              })
+            })
+            
+            const data = await response.json()
+            
+            if (response.ok) {
+              paid.value = true
+              alert('支付成功')
+              await getOrderStatus()
+            } else {
+              alert(data.message || '支付失败')
+            }
+          } catch (err) {
+            alert('网络错误，请稍后重试')
+            console.error(err)
+          } finally {
+            loading.value = false
+          }
+        }
+
+        const getOrderStatus = async () =&gt; {
+          try {
+            const token = localStorage.getItem('token')
+            const response = await fetch(`http://localhost:8080/api/order/${orderId.value}`, {
+              method: 'GET',
+              headers: {
+                'Authorization': 'Bearer ' + token
+              }
+            })
+            
+            const data = await response.json()
+            
+            if (response.ok) {
+              orderStatus.value = data.status || '未知'
+            } else {
+              orderStatus.value = '查询失败'
+            }
+          } catch (err) {
+            orderStatus.value = '查询失败'
+            console.error(err)
+          }
+        }
+
+        const logout = () =&gt; {
+          localStorage.removeItem('token')
+          phone.value = ''
+          error.value = ''
+          products.value = []
+          orderId.value = ''
+          payAmount.value = 0
+          paid.value = false
+          orderStatus.value = ''
+          addLog('已退出登录', 'success')
+          alert('已退出登录')
+        }
+
+        const resetOrder = () =&gt; {
+          orderId.value = ''
+          payAmount.value = 0
+          paid.value = false
+          orderStatus.value = ''
+          loadProducts()
+        }
+
+        onMounted(() =&gt; {
+          addLog('页面已挂载')
+          if (isLoggedIn.value) {
+            addLog('检测到已登录，自动加载商品列表')
+            loadProducts()
+          }
+        })
+
+        return {
+          phone,
+          error,
+          loading,
+          products,
+          orderId,
+          payAmount,
+          paid,
+          orderStatus,
+          debugLogs,
+          isLoggedIn,
+          showProductList,
+          showOrderSection,
+          login,
+          buyProduct,
+          payOrder,
+          logout,
+          resetOrder
+        }
+      }
+    }).mount('#app')
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;

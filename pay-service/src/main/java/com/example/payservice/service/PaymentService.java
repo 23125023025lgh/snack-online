@@ -19,10 +19,26 @@ public class PaymentService {
     private TradeFeignClient tradeFeignClient;
 
     public Payment createPayment(Long orderId, Long userId, BigDecimal payAmount) {
-        Payment payment = new Payment(orderId, userId, payAmount, "支付成功");
+        Payment payment = new Payment(orderId, userId, payAmount, Payment.STATUS_PROCESSING);
         Payment savedPayment = paymentRepository.save(payment);
 
-        tradeFeignClient.updateOrderStatus(orderId, "已支付");
+        try {
+            Thread.sleep(1500);
+
+            savedPayment.setStatus(Payment.STATUS_SUCCESS);
+            paymentRepository.save(savedPayment);
+
+            tradeFeignClient.updateOrderStatus(orderId, "已支付");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            savedPayment.setStatus(Payment.STATUS_FAILED);
+            paymentRepository.save(savedPayment);
+            throw new RuntimeException("支付过程被中断", e);
+        } catch (Exception e) {
+            savedPayment.setStatus(Payment.STATUS_FAILED);
+            paymentRepository.save(savedPayment);
+            throw new RuntimeException("支付失败", e);
+        }
 
         return savedPayment;
     }

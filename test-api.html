@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <script>
+        async function testLogin() {
+            const phone = document.getElementById('phone').value;
+            try {
+                const response = await fetch('http://localhost:8080/api/user/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phone: phone })
+                });
+                const data = await response.json();
+                document.getElementById('result').innerHTML = JSON.stringify(data, null, 2);
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    document.getElementById('result').style.color = 'green';
+                } else {
+                    document.getElementById('result').style.color = 'red';
+                }
+            } catch (err) {
+                document.getElementById('result').innerHTML = 'Error: ' + err.message;
+                document.getElementById('result').style.color = 'red';
+            }
+        }
+        
+        async function testProducts() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                document.getElementById('result').innerHTML = 'Please login first';
+                return;
+            }
+            try {
+                const response = await fetch('http://localhost:8080/api/product/list?shopId=1', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                const data = await response.json();
+                document.getElementById('result').innerHTML = JSON.stringify(data, null, 2);
+                document.getElementById('result').style.color = response.ok ? 'green' : 'red';
+            } catch (err) {
+                document.getElementById('result').innerHTML = 'Error: ' + err.message;
+                document.getElementById('result').style.color = 'red';
+            }
+        }
+    </script>
+</head>
+<body>
+    <input type="text" id="phone" placeholder="Phone" value="13800138000">
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testProducts()">Test Products</button>
+    <pre id="result"></pre>
+</body>
+</html>

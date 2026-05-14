@@ -1,8 +1,12 @@
+com\example\storeservice\controller\ProductController.class
+com\example\storeservice\entity\Product.class
+com\example\storeservice\repository\ProductRepository.class
 com\example\storeservice\service\UserService.class
 com\example\storeservice\dto\LoginRequest.class
 com\example\storeservice\repository\UserRepository.class
 com\example\storeservice\StoreServiceApplication.class
 com\example\storeservice\util\JwtUtil.class
+com\example\storeservice\service\ProductService.class
 com\example\storeservice\entity\User.class
 com\example\storeservice\controller\HelloController.class
 com\example\storeservice\controller\UserController.class
